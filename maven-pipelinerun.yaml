@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: maven-build-run-0
+spec:
+  pipelineRef:
+    name: maven-build
+  resources:
+  - name: app-git
+    resourceRef:
+      name: app-git
+  - name: app-image
+    resourceRef:
+      name: app-image
+  workspaces:
+  - name: local-maven-repo
+    persistentVolumeClaim:
+      claimName: maven-repo-pvc
+  - name: local-dockerfile
+    configMap:
+      name: dockerfile

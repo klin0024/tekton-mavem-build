@@ -1,0 +1,47 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: maven
+spec:
+  workspaces:
+  - name: maven-repo
+  - name: dockerfile
+  inputs:
+    params:
+    - name: GOALS
+      description: The Maven goals to run
+      type: array
+      default: ["package"]
+    - name: DOCKERFILE
+      description: The Dockerfile
+      type: string
+      default: "Dockerfile"
+    resources:
+    - name: source
+      type: git
+  outputs:
+    resources:
+    - name: destination
+      type: image    
+  steps:
+    - name: maven
+      image: gcr.io/cloud-builders/mvn
+      workingDir: /workspace/source
+      command: ["/usr/bin/mvn"]
+      args:
+        - -Dmaven.repo.local=$(workspaces.maven-repo.path) 
+        - "$(inputs.params.GOALS)" 
+    - name: build-and-push
+      image: gcr.io/kaniko-project/executor
+      workingDir: /workspace/source
+      env:
+        - name: "DOCKER_CONFIG"
+          value: "/builder/home/.docker/"
+      command:
+        - /kaniko/executor
+      args:
+        - --dockerfile=$(workspaces.dockerfile.path)/$(inputs.params.DOCKERFILE)
+        - --destination=$(outputs.resources.destination.url)
+        - --context=/workspace/source
+        - --skip-tls-verify
+        - --skip-tls-verify-pull       

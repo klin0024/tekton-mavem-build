@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dockerfile
+data:
+  Dockerfile: |
+    FROM java:8-jdk-alpine
+    COPY target/*.jar /usr/app/
+    WORKDIR /usr/app
+    CMD ["sh", "-c", "java -jar *.jar"]
