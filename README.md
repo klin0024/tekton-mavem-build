@@ -23,7 +23,7 @@ $ kubectl apply -f appimage-pipelineresource.yaml <br />
 $ kubectl apply -f maven-task.yaml <br />
 ### 5. 創建 pipeline
 $ kubectl apply -f maven-pipeline.yaml <br />
-### 5. 執行 pipeline
+### 6. 執行 pipeline
 $ kubectl apply -f maven-pipelinerun.yaml <br />
 #### 範例:
 apiVersion: tekton.dev/v1beta1 <br />
@@ -47,3 +47,5 @@ spec: <br />
   - name: local-dockerfile <br />
     configMap: <br />
       name: dockerfile #Dockerfile 的 configmap <br />
+### 6. 拉取image進行測試
+$ docker run -it --rm bastion.ks.example.com:5000/tekton/java:v1
